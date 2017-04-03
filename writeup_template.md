@@ -175,14 +175,14 @@ Here are five German traffic signs that I found on the web:
 
 The model accuracy for images on the web was only 20%. 
 
-Some of the low accuracy on sample images is because of the skewness of training data towards few labels. If a particular label is rare in the training set, then the model can keep training the model to high accuracies without ever detecting rare labels. 
-Here's a look at the 5 different images, and their abundance in training-cum-validation set, along with prediction accuracy. 
-|'Image' 		| Actual label	|Test Abundance	|	rank#	|	Probability	|
-|'20.png'		|	 0 			|	 0.005 		|	 43 	|	0.00 		|
-|'80.png'		|	 5 			|	 0.048 		|	  1 	|	0.065 		|
-|'caution.png'	|	18 			|	 0.031 		|	 13 	|	0.026		|
-|'keepleft.png'	|	39 			|	 0.008 		|	 11 	|	0.030 		|  
-|'roadwork.png'	|	25 			|	 0.038 		|	  8 	|	0.032 		|
+Some of the low accuracy on sample images is because of the skewness of training data towards few labels. If a particular label is rare in the training set, then the model can keep training the model to high accuracies without ever detecting rare labels. In case of our samples, the model wrongly predicted same class for 3 of 5 cases. 
+Here's a look at the 5 different images, and their abundance in training-cum-validation set, along with prediction accuracy (sorted). 
+|'Image' 		| Actual label	|Test Abundance	|Test rank#	|Detection rank#|	Probability	|
+|'80.png'		|	 5 			|	 0.048 		|	 8th	|		  1 	|	0.065 		|
+|'roadwork.png'	|	25 			|	 0.038 		|	10th	|		  8 	|	0.032 		|
+|'caution.png'	|	18 			|	 0.031 		|	16th	|		 13 	|	0.026		|
+|'keepleft.png'	|	39 			|	 0.008 		|	33rd	|		 11 	|	0.030 		|  
+|'20.png'		|	 0 			|	 0.005 		|	42nd	|		 43 	|	0.00 		|
 
-The model is more accurate for the label classes that are frequent in the training+validation set.  
+The model predicted only one of five signs correctly, the 80 speed limit sign. The correct label was outside the top5 for all other samples, but within top 13 (of 43) for 3 more signs, 2 of which along with detected sign had high prevalence in test data. Model prediction was completely useless for label classes that were rare in the training+validation set. 
 To make the model more accurate across different classes, we can increase the share of underrepresented classes in the training set. One option to do this is to generate additional data for these classes, or just reuse some of these inputs to increase their weight. 
