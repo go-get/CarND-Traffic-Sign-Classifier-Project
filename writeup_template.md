@@ -136,7 +136,7 @@ While tuning the dimensions of LeNet model, dimensions were so chosen, and care 
 
 The code for training the model is located in the eigth, tenth cells of the ipython notebook. 
 
-To train the model, I used the standard AdamOptimizer that performs better than StochasticGradientDescent. Minimize op was used to call compute_gradients() and apply_gradients() in sequence. Recommended Learning rate, hyperparameters and batch size, were taken from the MNIST computer vision exercise using LeNet. The model was trialed using 3 EPOCHs, and found to fit well on both training & validation sets. It was extended to basic 10 EPOCHs to go beyond the goal of 93% accuracy. 
+To train the model, I used the standard AdamOptimizer that performs better than StochasticGradientDescent. Minimize op was used to call compute_gradients() and apply_gradients() in sequence. Recommended Learning rate, hyperparameters and batch size, were taken from the MNIST computer vision exercise using LeNet. The model was trialed using 3 EPOCHs, and found to fit well on both training & validation sets. It was extended to basic 10 EPOCHs to go beyond the goal of 93% accuracy. It was noted that even for this small no of EPOCHs, the model accuracy had started deteriorating. In my training runs, it reached test and validation accuracies of 97% and 94%, and plateaued there. 
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
@@ -170,8 +170,19 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![stop][stop.jpeg] ![U-turn][testSet/U-turn.jpeg] ![yield][testSet/yield.jpeg]  
-![100kmph][100kmph.jpg] ![slippery][slippery.jpg]
+![20][testSet/20.png] ![80][testSet/80.png] ![caution][testSet/caution.png]  
+![keepleft][testSet/keepleft.png] ![roadwork][testSet/roadwork.png]
 
-Could not classify because unable to call the python model to run on these images. 
+The model accuracy for images on the web was only 20%. 
 
+Some of the low accuracy on sample images is because of the skewness of training data towards few labels. If a particular label is rare in the training set, then the model can keep training the model to high accuracies without ever detecting rare labels. In case of our samples, the model wrongly predicted same class for 3 of 5 cases. 
+Here's a look at the 5 different images, and their abundance in training-cum-validation set, along with prediction accuracy (sorted). 
+|'Image' 		| Actual label	|Test Abundance	|Test rank#	|Detection rank#|	Probability	|
+|'80.png'		|	 5 			|	 0.048 		|	 8th	|		  1 	|	0.065 		|
+|'roadwork.png'	|	25 			|	 0.038 		|	10th	|		  8 	|	0.032 		|
+|'caution.png'	|	18 			|	 0.031 		|	16th	|		 13 	|	0.026		|
+|'keepleft.png'	|	39 			|	 0.008 		|	33rd	|		 11 	|	0.030 		|  
+|'20.png'		|	 0 			|	 0.005 		|	42nd	|		 43 	|	0.00 		|
+
+The model predicted only one of five signs correctly, the 80 speed limit sign. The correct label was outside the top5 for all other samples, but within top 13 (of 43) for 3 more signs, 2 of which along with detected sign had high prevalence in test data. Model prediction was completely useless for label classes that were rare in the training+validation set. 
+To make the model more accurate across different classes, we can increase the share of underrepresented classes in the training set. One option to do this is to generate additional data for these classes, or just reuse some of these inputs to increase their weight. 
